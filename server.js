@@ -9,6 +9,7 @@ var io = socket(server);
 
 var awaiting_match_users = [];
 var matching_map = {};
+var name_map = {};
 
 io.on("connection", socket => {
   console.log("made socket connection");
@@ -34,18 +35,23 @@ io.on("connection", socket => {
       console.log(awaiting_match_users);
     });
 
+  socket.on("join", data => {
+    name_map[socket.id] = data.name;
+  });
+
   socket.on("disconnecting", () => {
     socket.to(matching_map[socket.id]).emit("disconnected");
     socket.emit("disconnected");
-
+    delete name_map[socket.id];
+    delete name_map[matching_map[socket.id]];
     delete matching_map[matching_map[socket.id]];
     delete matching_map[socket.id];
   });
 
   socket.on("chat", data => {
-    console.log(data);
     socket.to(matching_map[socket.id]).emit("chat", {
-      message: data.message
+      message: data.message,
+      name: name_map[matching_map[socket.id]]
     });
   });
 });
