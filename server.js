@@ -60,7 +60,7 @@ io.on("connection", socket => {
   socket.on("chat", data => {
     socket.to(matching_map[socket.id]).emit("chat", {
       message: data.message,
-      name: name_map[matching_map[socket.id]]
+      name: name_map[socket.id]
     });
   });
 });
