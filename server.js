@@ -11,6 +11,14 @@ var awaiting_match_users = [];
 var matching_map = {};
 var name_map = {};
 
+function removeElement(arr, element) {
+  for (var i = 0; i < arr.length; i++) {
+    if (arr[i] === element) {
+      arr.splice(i, 1);
+    }
+  }
+}
+
 io.on("connection", socket => {
   console.log("made socket connection");
   console.log(socket.id);
@@ -46,6 +54,7 @@ io.on("connection", socket => {
     delete name_map[matching_map[socket.id]];
     delete matching_map[matching_map[socket.id]];
     delete matching_map[socket.id];
+    removeElement(awaiting_match_users, socket.id);
   });
 
   socket.on("chat", data => {
